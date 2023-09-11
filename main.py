@@ -10,8 +10,11 @@ nick = config["database"]["USERNAME"]
 pswd = config["database"]["PASSWORD"]
 DB = config["database"]["DATABASE"]
 
+
 try:
-    connection = mysql.connector.connect(user=nick, password=pswd, host=ip, port=porta, database=DB)
+    connection = mysql.connector.connect(
+        user=nick, password=pswd, host=ip, port=porta, database=DB
+    )
 
 except mysql.connector.Error as error:
     if error.errno == errorcode.CR_UNKNOWN_HOST:
@@ -36,16 +39,17 @@ def main():
         address = input("Address: ")
         insert_data(name, address)
     elif option == 2:
-        id = int(input("ID: "))
-        select_data(id)
+        id_ = int(input("ID: "))
+        select_data(id_)
     elif option == 3:
-        id = int(input("ID: "))
+        id_ = int(input("ID: "))
         name = input("Name: ")
         address = input("Address: ")
-        update_data(id, name, address)
+        update_data(id_, name, address)
     elif option == 4:
-        id = int(input("ID: "))
-        delete_data(id)
+        id_ = int(input("ID: "))
+        delete_data(id_)
+
 
 def insert_data(name, address):
     cursor = connection.cursor()
@@ -61,11 +65,12 @@ def insert_data(name, address):
     finally:
         cursor.close()
 
-def select_data(id):
+
+def select_data(id_):
     cursor = connection.cursor(buffered=True)
     try:
         query = "SELECT * FROM Clientes WHERE id = (%s)"
-        data = (id,)
+        data = (id_,)
         cursor.execute(query, data)
 
         connection.commit()
@@ -80,11 +85,11 @@ def select_data(id):
         cursor.close()
 
 
-def update_data(id, name, address):
+def update_data(id_, name, address):
     cursor = connection.cursor()
     try:
         query = "UPDATE Clientes SET name = %s, address = %s WHERE ID = %s"
-        data = (name, address, id)
+        data = (name, address, id_)
         cursor.execute(query, data)
 
         connection.commit()
@@ -94,11 +99,12 @@ def update_data(id, name, address):
     finally:
         cursor.close()
 
-def delete_data(id):
+
+def delete_data(id_):
     cursor = connection.cursor()
     try:
         query = "DELETE FROM Clientes WHERE id = %s"
-        data = (id,)
+        data = (id_,)
         cursor.execute(query, data)
         connection.commit()
 
@@ -107,6 +113,7 @@ def delete_data(id):
         print(f"Failed to delete data because of {error}")
     finally:
         cursor.close()
+
 
 if __name__ == "__main__":
     main()
