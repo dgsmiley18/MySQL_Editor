@@ -1,0 +1,6 @@
+[database]
+    IP = "ip"
+    PORT = 3306
+    USERNAME = "username"
+    PASSWORD = "password"
+    DATABASE = "Name of the database"
