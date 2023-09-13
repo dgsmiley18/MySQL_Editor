@@ -5,26 +5,10 @@ import toml
 config = toml.load("config.toml")
 
 ip = config["database"]["IP"]
-porta = config["database"]["PORT"]
+port = config["database"]["PORT"]
 nick = config["database"]["USERNAME"]
 pswd = config["database"]["PASSWORD"]
 DB = config["database"]["DATABASE"]
-
-
-try:
-    connection = mysql.connector.connect(
-        user=nick, password=pswd, host=ip, port=porta, database=DB
-    )
-
-except mysql.connector.Error as error:
-    if error.errno == errorcode.CR_UNKNOWN_HOST:
-        print("Host not found, maybe the ip or port is wrong?")
-    elif error.errno == errorcode.ER_BAD_DB_ERROR:
-        print("Database does not exist")
-    elif error.errno == errorcode.ER_ACCESS_DENIED_ERROR:
-        print("username and password does not match")
-    else:
-        print(error)
 
 
 def main():
@@ -49,6 +33,22 @@ def main():
     elif option == 4:
         id_ = int(input("ID: "))
         delete_data(id_)
+
+
+try:
+    connection = mysql.connector.connect(
+        user=nick, password=pswd, host=ip, port=port, database=DB
+    )
+
+except mysql.connector.Error as error:
+    if error.errno == errorcode.CR_UNKNOWN_HOST:
+        print("Host not found, maybe the ip or port is wrong?")
+    elif error.errno == errorcode.ER_BAD_DB_ERROR:
+        print("Database does not exist")
+    elif error.errno == errorcode.ER_ACCESS_DENIED_ERROR:
+        print("username and password does not match")
+    else:
+        print(error)
 
 
 def insert_data(name, address):
@@ -76,8 +76,10 @@ def select_data(id_):
         connection.commit()
         results = cursor.fetchall()
 
-        for x in results:
-            print(x)
+        if not results:
+            print("ID not found")
+        else:
+            print(results)
 
     except mysql.connector.Error as error:
         print(f"Failed to select data because of {error}")
@@ -88,7 +90,7 @@ def select_data(id_):
 def update_data(id_, name, address):
     cursor = connection.cursor()
     try:
-        query = "UPDATE Clientes SET name = %s, address = %s WHERE ID = %s"
+        query = "UPDATE Clientes SET name = %s, address = %s WHERE id = %s"
         data = (name, address, id_)
         cursor.execute(query, data)
 
@@ -108,7 +110,7 @@ def delete_data(id_):
         cursor.execute(query, data)
         connection.commit()
 
-        print("Data deleted sucessfully")
+        print("Data deleted successfully")
     except mysql.connector.Error as error:
         print(f"Failed to delete data because of {error}")
     finally:
